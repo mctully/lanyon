@@ -3,3 +3,4 @@ _site
 .jekyll-metadata
 *.un?
 *.swp
+.DS_Store
