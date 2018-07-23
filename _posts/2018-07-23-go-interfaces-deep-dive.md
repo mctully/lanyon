@@ -15,7 +15,7 @@ How much memory is that, and where is it being spent?
 ## The interface struct
 In Go, an interface reference is a pair of pointers. The first pointer points to the type definition for whatever type of value has been stored, and the second pointer points to the value itself.
 
-Here's the definition of an `iface` from the Go runtime [Go](https://github.com/golang/go/blob/0a7ac93c27c9ade79fe0f66ae0bb81484c241ae5/src/runtime/runtime2.go#L143)
+Here's the definition of an `iface` from the [Go runtime](https://github.com/golang/go/blob/0a7ac93c27c9ade79fe0f66ae0bb81484c241ae5/src/runtime/runtime2.go#L143)
 
 ```go
 type iface struct {
