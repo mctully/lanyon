@@ -56,7 +56,7 @@ The data points to `uintptr`, which is a type which is large enough to hold a po
 
 As our slice is a slice of 5 interface references, this array of `uintptr`s will actually be an array of 5 `iface` structures, each of which has a size equivalent to two `uintptr`s, meaning we have a total of 10 `uintptr`s in this `Data` array.
 
-The follow snippet will extract the 4th `uintptr` from the `Data` member of the slice, which will therefore be the `data` field of the 2nd `iface` struct which has been stored in the slice.
+The following snippet will extract the 4th `uintptr` from the `Data` member of the slice, which will therefore be the `data` field of the 2nd `iface` struct which has been stored in the slice.
 
 ```go
 var _uv uintptr
@@ -153,7 +153,7 @@ Further, if you look at the dump of a boolean value from the output above, `(*0x
 
 If you were to store a `uint16` at every element in this 5,120 element slice, at the very least, it would take `5,120 * sizeof(iface) + 5,120 * sizeof(uint16)` bytes, i.e. 90KiB on a 64-bit architecture.
 
-I say, "at the very least", as the fact that there is a separate alloc for each `uint16` will almost certainly not simply cost the 2 bytes you get out of the alloc, as memory allocators have **overhead**. They have to track meta data on the alloc, such as how big is is, and often have to "pad" the allocation up to some multiple of 32/64 bits depending on the architecture. I haven't looked into the Go runtime memory allocator overhead yet (maybe I would be pleasantly surprised), but I would expect this a 2 byte alloc would cost at least 16 bytes on a 64-bit architecture. If this were the case, we could expect to be spending 160KiB on this array, which is a far leap from the 10KiB you may have naively assumed for a 5,120 element uint16 array.
+I say, "at the very least", as the fact that there is a separate alloc for each `uint16` will almost certainly not simply cost the 2 bytes you get out of the alloc, as memory allocators have **overhead**. They have to track meta data on the alloc, such as how big it is, and often have to "pad" the allocation up to some multiple of 32/64 bits depending on the architecture. I haven't looked into the Go runtime memory allocator overhead yet (maybe I would be pleasantly surprised), but I would expect this a 2 byte alloc would cost at least 16 bytes on a 64-bit architecture. If this were the case, we could expect to be spending 160KiB on this array, which is a far leap from the 10KiB you may have naively assumed for a 5,120 element uint16 array.
 
 Also, each of these 5,120 tiny allocs is 1 more bit of garbage that the Go garbage collection has to think about when it's time to garbage collect.
 
@@ -163,7 +163,7 @@ And don't forget, I had 10,000 of these 5,120 slices in the program I was analys
 
 So, to recap - when a simple value is assigned to an `interface{}` variable, a heap alloc is done and the value is copied into the allocated memory. Then the `iface` struct is filled out with a `type` pointer and a pointer to the allocated memory holding the value. The only exception is for single byte values, where the memory alloc is skipped, and the `data` pointer is set to point to the correct value in a shared static byte array instead.
 
-So that's the theory, and it's backed up our memory dumping, so now let's look at the code.
+So that's the theory, and it's backed up by our memory dumping, so now let's look at the code.
 
 If you create a new Go file called "interface.go" using the following code:
 
